@@ -15,7 +15,7 @@ const int dPin = 6;
 
 // Set the first variable to the NUMBER of pixels. 32 = 32 pixels in a row
 // The LED strips are 32 LEDs per meter but you can extend/cut the strip
-Adafruit_WS2801 strip = Adafruit_WS2801(36,dataPin,clockPin);
+Adafruit_WS2801 strip = Adafruit_WS2801(25,dataPin,clockPin);
 
 int start = 0;
 
@@ -31,6 +31,11 @@ void setup()
 {
   Serial.begin(9600);
   
+  while (!Serial) {
+    Serial.println("serial has not started");
+  }
+  
+  
   // Start up the LED strip
   strip.begin();
   // Update the strip, to start they are all 'off'
@@ -40,6 +45,10 @@ void setup()
   {
     Serial.println("Oops ... unable to initialize the LSM303. Check your wiring!");
     while (1);
+  } else{
+  
+  Serial.println("lsm started");
+  
   }
   pinMode(cPin, INPUT); 
   pinMode(dPin, INPUT);
@@ -48,15 +57,18 @@ void setup()
 void loop() 
 {
   check_switches();      // when we check the switches we'll get the current state
-  
+  Serial.println("still looping");
+  Serial.println("before the lsm read");
   lsm.read();
-  currentX = abs(lsm.accelData.x);
   
+  Serial.println("after the lsm read");
+  currentX = abs(lsm.accelData.x);
+
   if (start == 0){
     prevX = currentX;
     start = 1;
   }
-  
+
   int i = currentX - prevX;
 
   if (abs(i) > BRAKETHRESHOLD) {
@@ -69,7 +81,7 @@ void loop()
       lsm.read();
       currentX = abs(lsm.accelData.x);
       i = currentX - prevX;
-      
+
       if ((millis() - brakeTime) > BRAKETIMETHRESHOLD) {
         brakeLights(Color(255,0,0),250);
         while (abs(i) > BRAKETHRESHOLD) {
@@ -82,8 +94,8 @@ void loop()
         hideAll();
         brakeTime = millis();
         i = 0;
-                  lsm.read();
-          currentX = abs(lsm.accelData.x);
+        lsm.read();
+        currentX = abs(lsm.accelData.x);
       }
     }
   }
@@ -97,9 +109,12 @@ void check_switches()
   cState = digitalRead(cPin);
   dState = digitalRead(dPin);
 
+  Serial.println(cState);
+  Serial.println(dState);
+  
   if (cState == HIGH) {     
     // left blinker
-     Serial.println("left blink on"); 
+    Serial.println("left blink on"); 
     hideAll();
     leftTurn(Color(255,63,0),250);
     delay(300);
@@ -107,7 +122,7 @@ void check_switches()
     hideAll();
     delay(300);  
   }
-  
+
   if (dState == HIGH) {     
     // right blinker
     Serial.println("right blink on"); 
@@ -121,46 +136,46 @@ void check_switches()
 }
 
 void leftTurn(uint32_t c,uint8_t wait){
- innerLeftBottom(c);
- innerLeftTop(c);
-   strip.show(); 
- delay(wait);
- hideAll();
- outerLeftTop(c);
- outerLeftBottom(c);
-   strip.show(); 
- delay(wait);
- hideAll();
+  innerLeftBottom(c);
+  innerLeftTop(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
+  outerLeftTop(c);
+  outerLeftBottom(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
 }
 
 void rightTurn(uint32_t c,uint8_t wait){
- innerRightBottom(c);
- innerRightTop(c);
-   strip.show(); 
- delay(wait);
- hideAll();
- outerRightTop(c);
- outerRightBottom(c);
-   strip.show(); 
- delay(wait);
- hideAll();
+  innerRightBottom(c);
+  innerRightTop(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
+  outerRightTop(c);
+  outerRightBottom(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
 }
 
 void brakeLights(uint32_t c, uint8_t wait){
   innerRightBottom(c);
- innerRightTop(c);
- innerLeftBottom(c);
- innerLeftTop(c);
-   strip.show(); 
- delay(wait);
- hideAll();
- outerLeftTop(c);
- outerLeftBottom(c);
- outerRightTop(c);
- outerRightBottom(c);
-   strip.show(); 
- delay(wait);
- hideAll();
+  innerRightTop(c);
+  innerLeftBottom(c);
+  innerLeftTop(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
+  outerLeftTop(c);
+  outerLeftBottom(c);
+  outerRightTop(c);
+  outerRightBottom(c);
+  strip.show(); 
+  delay(wait);
+  hideAll();
 }
 
 
@@ -218,7 +233,7 @@ void outerLeftBottom(uint32_t c){
 
 void hideAll(){
   for(int i = 0; i > strip.numPixels();i++){
-   strip.setPixelColor(i,Color(0,0,0));
+    strip.setPixelColor(i,Color(0,0,0));
   }
   strip.show();
 }
@@ -234,3 +249,5 @@ uint32_t Color(byte r, byte g, byte b)
   c |= b;
   return c;
 }
+
+
