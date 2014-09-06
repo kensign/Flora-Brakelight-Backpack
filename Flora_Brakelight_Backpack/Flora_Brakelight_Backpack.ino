@@ -8,8 +8,8 @@ Adafruit_LSM303 lsm;
 #define BRAKETHRESHOLD        350
 #define BRAKETIMETHRESHOLD    200
 
-int dataPin  = 2;    // Yellow wire on Adafruit Pixels
-int clockPin = 3;    // Green wire on Adafruit Pixels
+int dataPin  = 10;    // Yellow wire on Adafruit Pixels
+int clockPin = 9;    // Green wire on Adafruit Pixels
 const int cPin = 11;
 const int dPin = 6;
 
@@ -136,46 +136,65 @@ void check_switches()
 }
 
 void leftTurn(uint32_t c,uint8_t wait){
-  innerLeftBottom(c);
-  innerLeftTop(c);
+  allLeft(c);
   strip.show(); 
   delay(wait);
   hideAll();
-  outerLeftTop(c);
-  outerLeftBottom(c);
+  allLeft(c);
   strip.show(); 
   delay(wait);
   hideAll();
 }
 
 void rightTurn(uint32_t c,uint8_t wait){
-  innerRightBottom(c);
-  innerRightTop(c);
+  allRight(c);
   strip.show(); 
   delay(wait);
   hideAll();
-  outerRightTop(c);
-  outerRightBottom(c);
+  allRight(c);
   strip.show(); 
   delay(wait);
   hideAll();
 }
 
 void brakeLights(uint32_t c, uint8_t wait){
-  innerRightBottom(c);
-  innerRightTop(c);
-  innerLeftBottom(c);
-  innerLeftTop(c);
+  allRight(c);
+  allLeft(c);
   strip.show(); 
   delay(wait);
   hideAll();
-  outerLeftTop(c);
-  outerLeftBottom(c);
-  outerRightTop(c);
-  outerRightBottom(c);
+  allLeft(c);
+  allRight(c);
   strip.show(); 
   delay(wait);
   hideAll();
+}
+
+void allRight(uint32_t c){
+  
+  for(int i=6; i<= 12; i++){
+    strip.setPixelColor(i, c);
+  }  
+  
+  for(int i=18; i<= 24; i++){
+    strip.setPixelColor(i, c);
+  }
+}
+
+void allLeft(uint32_t c){
+  int firstIn = 24;
+  int firstOut = 12;
+  
+  strip.setPixelColor(firstIn, c);
+  strip.setPixelColor(firstOut, c);  
+  
+  for(int i=1; i<= 6; i++){
+    strip.setPixelColor(i, c);
+  }
+  
+  for(int i=13; i<= 18; i++){
+    strip.setPixelColor(i, c);
+  }  
 }
 
 
@@ -184,55 +203,57 @@ void brakeLights(uint32_t c, uint8_t wait){
 //Input a value 0 to 384 to get a color value.
 //The colours are a transition r - g - b - back to r
 
-void outerRightBottom(uint32_t c){
-  for (int i=0; i < 5; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-void outerRightTop(uint32_t c){
-  for (int i=5; i < 10; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-void innerRightTop(uint32_t c){
-  for (int i=10; i < 14; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-void innerRightBottom(uint32_t c){
-  for (int i=14; i < 18; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-
-void innerLeftBottom(uint32_t c){
-  for (int i=18; i < 22; i++) {
-    strip.setPixelColor(i, c);
-    strip.show();
-  }
-}
-
-void innerLeftTop(uint32_t c){
-  for (int i=22; i < 26; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-
-void outerLeftTop(uint32_t c){
-  for (int i=26; i < 31; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
-void outerLeftBottom(uint32_t c){
-  for (int i=31; i < 36; i++) {
-    strip.setPixelColor(i, c);
-  }
-}
+//void outerRightBottom(uint32_t c){
+//  for (int i=0; i < 5; i++) {
+//    strip.setPixelColor(i, c);
+//    
+//    
+//  }
+//}
+//void outerRightTop(uint32_t c){
+//  for (int i=5; i < 10; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
+//void innerRightTop(uint32_t c){
+//  for (int i=10; i < 14; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
+//void innerRightBottom(uint32_t c){
+//  for (int i=14; i < 18; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
+//
+//void innerLeftBottom(uint32_t c){
+//  for (int i=18; i < 22; i++) {
+//    strip.setPixelColor(i, c);
+//    strip.show();
+//  }
+//}
+//
+//void innerLeftTop(uint32_t c){
+//  for (int i=22; i < 26; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
+//
+//void outerLeftTop(uint32_t c){
+//  for (int i=26; i < 31; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
+//void outerLeftBottom(uint32_t c){
+//  for (int i=31; i < 36; i++) {
+//    strip.setPixelColor(i, c);
+//  }
+//}
 
 
 
 void hideAll(){
-  for(int i = 0; i > strip.numPixels();i++){
+  for(int i = 0; i < strip.numPixels();i++){
     strip.setPixelColor(i,Color(0,0,0));
   }
   strip.show();
