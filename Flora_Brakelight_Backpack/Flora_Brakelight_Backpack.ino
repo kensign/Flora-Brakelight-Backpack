@@ -10,7 +10,7 @@ Adafruit_LSM303 lsm;
 
 int dataPin  = 10;    // Yellow wire on Adafruit Pixels
 int clockPin = 9;    // Green wire on Adafruit Pixels
-const int cPin = 11;
+const int cPin = 12;
 const int dPin = 6;
 
 // Set the first variable to the NUMBER of pixels. 32 = 32 pixels in a row
@@ -18,10 +18,8 @@ const int dPin = 6;
 Adafruit_WS2801 strip = Adafruit_WS2801(25,dataPin,clockPin);
 
 int start = 0;
-
 int prevX = 0;
 int currentX = 0;
-
 int cState = 0;
 int dState = 0;
 
@@ -31,9 +29,9 @@ void setup()
 {
   Serial.begin(9600);
   
-  while (!Serial) {
-    Serial.println("serial has not started");
-  }
+  //while (!Serial) {
+    //Serial.println("serial has not started");
+  //}
   
   
   // Start up the LED strip
@@ -43,11 +41,11 @@ void setup()
   // Try to initialise and warn if we couldn't detect the chip
   if (!lsm.begin())
   {
-    Serial.println("Oops ... unable to initialize the LSM303. Check your wiring!");
+    //Serial.println("Oops ... unable to initialize the LSM303. Check your wiring!");
     while (1);
   } else{
   
-  Serial.println("lsm started");
+  //Serial.println("lsm started");
   
   }
   pinMode(cPin, INPUT); 
@@ -57,11 +55,11 @@ void setup()
 void loop() 
 {
   check_switches();      // when we check the switches we'll get the current state
-  Serial.println("still looping");
-  Serial.println("before the lsm read");
+  //Serial.println("still looping");
+  //Serial.println("before the lsm read");
   lsm.read();
   
-  Serial.println("after the lsm read");
+  //Serial.println("after the lsm read");
   currentX = abs(lsm.accelData.x);
 
   if (start == 0){
@@ -109,27 +107,27 @@ void check_switches()
   cState = digitalRead(cPin);
   dState = digitalRead(dPin);
 
-  Serial.println(cState);
-  Serial.println(dState);
+  //Serial.println(cState);
+  //Serial.println(dState);
   
   if (cState == HIGH) {     
     // left blinker
-    Serial.println("left blink on"); 
+    //Serial.println("left blink on"); 
     hideAll();
     leftTurn(Color(255,63,0),250);
     delay(300);
-    Serial.println("left blink off");
+    //Serial.println("left blink off");
     hideAll();
     delay(300);  
   }
 
   if (dState == HIGH) {     
     // right blinker
-    Serial.println("right blink on"); 
+    //Serial.println("right blink on"); 
     hideAll();
     rightTurn(Color(255,63,0),250);
     delay(300);
-    Serial.println("right blink off");
+    //Serial.println("right blink off");
     hideAll();
     delay(300);  
   }
@@ -196,60 +194,6 @@ void allLeft(uint32_t c){
     strip.setPixelColor(i, c);
   }  
 }
-
-
-/* Helper functions */
-
-//Input a value 0 to 384 to get a color value.
-//The colours are a transition r - g - b - back to r
-
-//void outerRightBottom(uint32_t c){
-//  for (int i=0; i < 5; i++) {
-//    strip.setPixelColor(i, c);
-//    
-//    
-//  }
-//}
-//void outerRightTop(uint32_t c){
-//  for (int i=5; i < 10; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-//void innerRightTop(uint32_t c){
-//  for (int i=10; i < 14; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-//void innerRightBottom(uint32_t c){
-//  for (int i=14; i < 18; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-//
-//void innerLeftBottom(uint32_t c){
-//  for (int i=18; i < 22; i++) {
-//    strip.setPixelColor(i, c);
-//    strip.show();
-//  }
-//}
-//
-//void innerLeftTop(uint32_t c){
-//  for (int i=22; i < 26; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-//
-//void outerLeftTop(uint32_t c){
-//  for (int i=26; i < 31; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-//void outerLeftBottom(uint32_t c){
-//  for (int i=31; i < 36; i++) {
-//    strip.setPixelColor(i, c);
-//  }
-//}
-
 
 
 void hideAll(){
